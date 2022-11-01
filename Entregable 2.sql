@@ -44,18 +44,11 @@ CREATE TABLE "comments" (
   "date" timestamp DEFAULT 'now()'
 );
 
-CREATE TABLE "answer_comments_author" (
+CREATE TABLE "answer_comments" (
   "id_answer_comments" SERIAL PRIMARY KEY,
   "id_comments" int NOT NULL,
-  "id_author" int NOT NULL,
-  "comment" text,
-  "date" timestamp DEFAULT 'now()'
-);
-
-CREATE TABLE "answer_comments_users" (
-  "id_answer_comments" SERIAL PRIMARY KEY,
-  "id_comments" int NOT NULL,
-  "id_common_user" int NOT NULL,
+  "id_author" int,
+  "id_common_user" int,
   "comment" text,
   "date" timestamp DEFAULT 'now()'
 );
@@ -78,13 +71,11 @@ ALTER TABLE "comments" ADD FOREIGN KEY ("id_posts") REFERENCES "posts" ("id_post
 
 ALTER TABLE "comments" ADD FOREIGN KEY ("id_common_user") REFERENCES "common_user" ("id_common_user");
 
-ALTER TABLE "answer_comments_author" ADD FOREIGN KEY ("id_comments") REFERENCES "comments" ("id_comments");
+ALTER TABLE "answer_comments" ADD FOREIGN KEY ("id_comments") REFERENCES "comments" ("id_comments");
 
-ALTER TABLE "answer_comments_author" ADD FOREIGN KEY ("id_author") REFERENCES "author" ("id_author");
+ALTER TABLE "answer_comments" ADD FOREIGN KEY ("id_author") REFERENCES "author" ("id_author");
 
-ALTER TABLE "answer_comments_users" ADD FOREIGN KEY ("id_comments") REFERENCES "comments" ("id_comments");
-
-ALTER TABLE "answer_comments_users" ADD FOREIGN KEY ("id_common_user") REFERENCES "common_user" ("id_common_user");
+ALTER TABLE "answer_comments" ADD FOREIGN KEY ("id_common_user") REFERENCES "common_user" ("id_common_user");
 
 insert into users ("alias", first_name, last_name, email, "password", age) 
 values 
@@ -113,12 +104,12 @@ values
 (1, 2, 'Increible, ya quiero comprarlo'),
 (1, 1, 'Y si mejor salvamos nuestro planeta?');
 
-insert into answer_comments_author (id_comments, id_author, "comment")
+insert into answer_comments (id_comments, id_author, "comment")
 values 
 (1, 1, 'Sí, está muy genial'),
 (2, 1, 'Tienes razón, pero no depende de nosotros. :(');
 
-insert into answer_comments_users (id_comments, id_common_user, "comment")
+insert into answer_comments (id_comments, id_common_user, "comment")
 values 
 (1, 1, 'Lo compraré'),
 (2, 1, 'Qué triste...');
