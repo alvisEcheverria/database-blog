@@ -119,3 +119,5 @@ insert into answer_comments (id_comments, id_common_user, "comment")
 values 
 (1, 1, 'Lo compraré'),
 (2, 1, 'Qué triste...');
+
+/**/
