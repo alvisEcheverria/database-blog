@@ -1,6 +1,5 @@
 CREATE TABLE "users" (
   "id_user" SERIAL PRIMARY KEY,
-  "alias" varchar UNIQUE NOT NULL,
   "first_name" varchar NOT NULL,
   "last_name" varchar NOT NULL,
   "email" varchar UNIQUE NOT NULL,
@@ -11,13 +10,13 @@ CREATE TABLE "users" (
 CREATE TABLE "author" (
   "id_author" SERIAL PRIMARY KEY,
   "id_user" int NOT NULL,
-  "alias" varchar NOT NULL
+  "alias" varchar UNIQUE NOT NULL
 );
 
 CREATE TABLE "common_user" (
   "id_common_user" SERIAL PRIMARY KEY,
   "id_user" int NOT NULL,
-  "alias" varchar NOT NULL
+  "alias" varchar UNIQUE NOT NULL
 );
 
 CREATE TABLE "tags" (
@@ -25,14 +24,18 @@ CREATE TABLE "tags" (
   "name" varchar UNIQUE NOT NULL
 );
 
+CREATE TABLE "tags_posts" (
+  "id_tags" int NOT NULL,
+  "id_posts" int NOT NULL
+);
+
 CREATE TABLE "posts" (
   "id_posts" SERIAL PRIMARY KEY,
   "id_author" int NOT NULL,
-  "id_tags" int NOT NULL,
-  "name_tags" varchar NOT NULL,
-  "title" varchar,
+  "alias" varchar NOT NULL,
+  "title" varchar NOT NULL,
   "description" varchar,
-  "content" text,
+  "content" text NOT NULL,
   "date" timestamp DEFAULT 'now()'
 );
 
@@ -40,7 +43,7 @@ CREATE TABLE "comments" (
   "id_comments" SERIAL PRIMARY KEY,
   "id_common_user" int NOT NULL,
   "id_posts" int NOT NULL,
-  "comment" text,
+  "comment" text NOT NULL,
   "date" timestamp DEFAULT 'now()'
 );
 
@@ -49,38 +52,36 @@ CREATE TABLE "answer_comments" (
   "id_comments" int NOT NULL,
   "id_author" int,
   "id_common_user" int,
-  "comment" text,
+  "comment" text NOT NULL,
   "date" timestamp DEFAULT 'now()'
 );
 
 ALTER TABLE "author" ADD FOREIGN KEY ("id_user") REFERENCES "users" ("id_user");
 
-ALTER TABLE "author" ADD FOREIGN KEY ("alias") REFERENCES "users" ("alias");
-
 ALTER TABLE "common_user" ADD FOREIGN KEY ("id_user") REFERENCES "users" ("id_user");
-
-ALTER TABLE "common_user" ADD FOREIGN KEY ("alias") REFERENCES "users" ("alias");
 
 ALTER TABLE "posts" ADD FOREIGN KEY ("id_author") REFERENCES "author" ("id_author");
 
-ALTER TABLE "posts" ADD FOREIGN KEY ("id_tags") REFERENCES "tags" ("id_tags");
-
-ALTER TABLE "posts" ADD FOREIGN KEY ("name_tags") REFERENCES "tags" ("name");
+ALTER TABLE "posts" ADD FOREIGN KEY ("alias") REFERENCES "author" ("alias");
 
 ALTER TABLE "comments" ADD FOREIGN KEY ("id_posts") REFERENCES "posts" ("id_posts");
 
 ALTER TABLE "comments" ADD FOREIGN KEY ("id_common_user") REFERENCES "common_user" ("id_common_user");
 
-ALTER TABLE "answer_comments" ADD FOREIGN KEY ("id_comments") REFERENCES "comments" ("id_comments");
+ALTER TABLE "tags_posts" ADD FOREIGN KEY ("id_tags") REFERENCES "tags" ("id_tags");
+
+ALTER TABLE "tags_posts" ADD FOREIGN KEY ("id_posts") REFERENCES "posts" ("id_posts");
 
 ALTER TABLE "answer_comments" ADD FOREIGN KEY ("id_author") REFERENCES "author" ("id_author");
 
 ALTER TABLE "answer_comments" ADD FOREIGN KEY ("id_common_user") REFERENCES "common_user" ("id_common_user");
 
-insert into users ("alias", first_name, last_name, email, "password", age) 
+ALTER TABLE "answer_comments" ADD FOREIGN KEY ("id_comments") REFERENCES "comments" ("id_comments");
+
+insert into users (first_name, last_name, email, "password", age) 
 values 
-('Petro', 'Alvis', 'Echeverria', 'alvis@gmail.com', '123456', '32'),
-('Petra', 'Adriana', 'Diaz', 'adriana@gmail.com', '12345', '28');
+('Alvis', 'Echeverria', 'alvis@gmail.com', '123456', '32'),
+('Adriana', 'Diaz', 'adriana@gmail.com', '12345', '28');
 
 insert into author (id_user, alias) values (1, 'Petro');
 
@@ -92,12 +93,17 @@ values
 ('alimentación'), 
 ('tecnología'), 
 ('educación'), 
-('motores'); 
+('motores');
 
-insert into posts (id_author, id_tags, name_tags, title, description, "content") 
+insert into posts (id_author, alias, title, description, "content") 
 values
-(1, 3, 'tecnología', 'Space X', 'Nueva Misión', 'Se planea llegar a marte muy pronto'),
-(1, 5, 'motores', 'Nuevo Nissan', 'El Nissan que lo cambia todo', 'Este Nissan tiene un motor que cambiara el mercado, el más potente hasta el momento');
+(1,  'Petro', 'Space X', 'Nueva Misión', 'Se planea llegar a marte muy pronto'),
+(1,  'Petro', 'Nuevo Nissan', 'El Nissan que lo cambia todo', 'Este Nissan tiene un motor que cambiara el mercado, el más potente hasta el momento');
+
+insert into tags_posts (id_tags, id_posts) 
+values 
+(3, 1),
+(5, 2);
 
 insert into "comments" (id_common_user, id_posts, "comment") 
 values
