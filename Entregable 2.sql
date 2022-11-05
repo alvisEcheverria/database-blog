@@ -25,6 +25,7 @@ CREATE TABLE "tags" (
 );
 
 CREATE TABLE "tags_posts" (
+  "id_tags_posts" SERIAL PRIMARY KEY,
   "id_tags" int NOT NULL,
   "id_posts" int NOT NULL
 );
